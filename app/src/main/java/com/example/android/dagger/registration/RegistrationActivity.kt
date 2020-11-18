@@ -24,16 +24,32 @@ import com.example.android.dagger.R
 import com.example.android.dagger.main.MainActivity
 import com.example.android.dagger.registration.enterdetails.EnterDetailsFragment
 import com.example.android.dagger.registration.termsandconditions.TermsAndConditionsFragment
+import javax.inject.Inject
 
 class RegistrationActivity : AppCompatActivity() {
 
+    // Stores an instance of RegistrationComponent so that its Fragments can access it
+    lateinit var registrationComponent: RegistrationComponent
+
+    // @Inject annotation makes field provided by Dagger
+    @Inject
     lateinit var registrationViewModel: RegistrationViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        // Ask Dagger to inject our dependencies in its graph
+        // GithubBrowserSample has this done in MainActivity already by now from the AppInjector helper class
+        // (when our application class instantiates the dagger graph) -- because MainActivity is a
+        // declared module in AppComponent
+
+        // Creates an instance of Registration by grabbing the factory from the app graph
+        registrationComponent =
+                (application as MyApplication).appComponent.registrationComponent().create()
+        // Injects this activity to the just created registrationComponent
+        registrationComponent.inject(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registration)
-
-        registrationViewModel = RegistrationViewModel((application as MyApplication).userManager)
         supportFragmentManager.beginTransaction()
             .add(R.id.fragment_holder, EnterDetailsFragment())
             .commit()

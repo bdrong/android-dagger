@@ -17,12 +17,18 @@
 package com.example.android.dagger
 
 import android.app.Application
+import com.example.android.dagger.di.AppComponent
+import com.example.android.dagger.di.DaggerAppComponent
 import com.example.android.dagger.storage.SharedPreferencesStorage
 import com.example.android.dagger.user.UserManager
 
 open class MyApplication : Application() {
-
-    open val userManager by lazy {
-        UserManager(SharedPreferencesStorage(this))
+    // Instance of AppComponent that will be used by all Activities in the project
+    val appComponent: AppComponent by lazy {
+        // Creates an instance of AppComponent (Dagger graph) using its factory constructor
+        // We pass applicationContext that will be used as the Context in the graph
+        // GithubBrowserSample uses a helper class AppInjector that injects fragments for us when an
+        // activity is created
+        DaggerAppComponent.factory().create(applicationContext)
     }
 }

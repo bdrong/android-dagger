@@ -17,6 +17,8 @@
 package com.example.android.dagger.user
 
 import com.example.android.dagger.storage.Storage
+import javax.inject.Inject
+import javax.inject.Singleton
 
 private const val REGISTERED_USER = "registered_user"
 private const val PASSWORD_SUFFIX = "password"
@@ -24,20 +26,32 @@ private const val PASSWORD_SUFFIX = "password"
 /**
  * Handles User lifecycle. Manages registrations, logs in and logs out.
  * Knows when the user is logged in.
+ *
+ * We have to attach the lifetime of this Component to something that knows when the user logs in
+ * and out. In our case that's UserManager. It handles registrations, log in and log out attempts so
+ * it makes sense for the UserComponent instance to be there.
  */
-class UserManager(private val storage: Storage) {
+@Singleton
+class UserManager @Inject constructor(
+        private val storage: Storage,
+        // Since UserManager will be in charge of managing the UserComponent lifecycle, it needs to
+        // know how to create instances of it
+        private val userComponentFactory: UserComponent.Factory
+) {
 
     /**
      *  UserDataRepository is specific to a logged in user. This determines if the user
      *  is logged in or not, when the user logs in, a new instance will be created.
      *  When the user logs out, this will be null.
      */
-    var userDataRepository: UserDataRepository? = null
+//    var userDataRepository: UserDataRepository? = null
+
+    var userComponent: UserComponent? = null
 
     val username: String
         get() = storage.getString(REGISTERED_USER)
 
-    fun isUserLoggedIn() = userDataRepository != null
+    fun isUserLoggedIn() = userComponent != null
 
     fun isUserRegistered() = storage.getString(REGISTERED_USER).isNotEmpty()
 
@@ -59,7 +73,7 @@ class UserManager(private val storage: Storage) {
     }
 
     fun logout() {
-        userDataRepository = null
+        userComponent = null
     }
 
     fun unregister() {
@@ -70,6 +84,6 @@ class UserManager(private val storage: Storage) {
     }
 
     private fun userJustLoggedIn() {
-        userDataRepository = UserDataRepository(this)
+        userComponent = userComponentFactory.create()
     }
 }
