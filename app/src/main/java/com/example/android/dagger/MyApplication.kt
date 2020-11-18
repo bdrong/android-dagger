@@ -29,6 +29,10 @@ open class MyApplication : Application() {
         // We pass applicationContext that will be used as the Context in the graph
         // GithubBrowserSample uses a helper class AppInjector that injects fragments for us when an
         // activity is created
-        DaggerAppComponent.factory().create(applicationContext)
+        initializeComponent()
+    }
+
+    open fun initializeComponent(): AppComponent {
+        return DaggerAppComponent.factory().create(applicationContext)
     }
 }

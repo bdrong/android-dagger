@@ -16,6 +16,7 @@
 
 package com.example.android.dagger.user
 
+import com.example.android.dagger.di.RegistrationStorage
 import com.example.android.dagger.storage.Storage
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -33,10 +34,10 @@ private const val PASSWORD_SUFFIX = "password"
  */
 @Singleton
 class UserManager @Inject constructor(
-        private val storage: Storage,
-        // Since UserManager will be in charge of managing the UserComponent lifecycle, it needs to
-        // know how to create instances of it
-        private val userComponentFactory: UserComponent.Factory
+    @RegistrationStorage private val storage: Storage,
+    // Since UserManager will be in charge of managing the UserComponent lifecycle, it needs to
+    // know how to create instances of it
+    private val userComponentFactory: UserComponent.Factory
 ) {
 
     /**

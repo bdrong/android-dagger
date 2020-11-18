@@ -1,28 +1,21 @@
 package com.example.android.dagger.di
 
 import android.content.Context
+import com.example.android.dagger.storage.FakeStorage
 import com.example.android.dagger.storage.SharedPreferencesStorage
 import com.example.android.dagger.storage.Storage
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import javax.inject.Qualifier
 
-@Retention(AnnotationRetention.BINARY)
-@Qualifier
-annotation class RegistrationStorage
-
-@Retention(AnnotationRetention.BINARY)
-@Qualifier
-annotation class LoginStorage
-
-// Dagger module
+// Overrides StorageModule in android tests
 // Because of @Binds, StorageModule needs to be an abstract class
 @Module
-class StorageModule {
-    // Makes Dagger provide SharedPreferencesStorage when a Storage type is requested
+class TestStorageModule {
+
+    // Makes Dagger provide FakeStorage when a Storage type is requested
 //    @Binds
-//    abstract fun provideStorage(storage: SharedPreferencesStorage): Storage
+//    abstract fun provideStorage(storage: FakeStorage): Storage
 
     @RegistrationStorage
     @Provides
